@@ -39,13 +39,13 @@ FROM build-base-${BASE_VARIANT} AS goversioninfo
 ARG GOVERSIONINFO_VERSION
 RUN --mount=type=cache,target=/root/.cache/go-build \
     --mount=type=cache,target=/go/pkg/mod \
-    GOBIN=/out GO111MODULE=on go install "github.com/josephspurrier/goversioninfo/cmd/goversioninfo@${GOVERSIONINFO_VERSION}"
+    GOBIN=/out GO111MODULE=on GOPROXY="https://goproxy.cn,direct" go install "github.com/josephspurrier/goversioninfo/cmd/goversioninfo@${GOVERSIONINFO_VERSION}"
 
 FROM build-base-${BASE_VARIANT} AS gotestsum
 ARG GOTESTSUM_VERSION
 RUN --mount=type=cache,target=/root/.cache/go-build \
     --mount=type=cache,target=/go/pkg/mod \
-    GOBIN=/out GO111MODULE=on go install "gotest.tools/gotestsum@${GOTESTSUM_VERSION}" \
+    GOBIN=/out GO111MODULE=on GOPROXY="https://goproxy.cn,direct" go install "gotest.tools/gotestsum@${GOTESTSUM_VERSION}" \
     && /out/gotestsum --version
 
 FROM build-${BASE_VARIANT} AS build
@@ -102,14 +102,14 @@ RUN apk add --no-cache build-base curl docker-compose openssl openssh-client
 FROM build-base-bullseye AS e2e-base-bullseye
 RUN apt-get update && apt-get install -y build-essential curl openssl openssh-client
 ARG COMPOSE_VERSION=1.29.2
-RUN curl -fsSL https://github.com/docker/compose/releases/download/${COMPOSE_VERSION}/docker-compose-$(uname -s)-$(uname -m) -o /usr/local/bin/docker-compose && \
+RUN curl -fsSL https://ghproxy.com/github.com/docker/compose/releases/download/${COMPOSE_VERSION}/docker-compose-$(uname -s)-$(uname -m) -o /usr/local/bin/docker-compose && \
     chmod +x /usr/local/bin/docker-compose
 
 FROM docker/buildx-bin:${BUILDX_VERSION} AS buildx
 
 FROM e2e-base-${BASE_VARIANT} AS e2e
 ARG NOTARY_VERSION=v0.6.1
-ADD --chmod=0755 https://github.com/theupdateframework/notary/releases/download/${NOTARY_VERSION}/notary-Linux-amd64 /usr/local/bin/notary
+ADD --chmod=0755 https://ghproxy.com/github.com/theupdateframework/notary/releases/download/${NOTARY_VERSION}/notary-Linux-amd64 /usr/local/bin/notary
 COPY e2e/testdata/notary/root-ca.cert /usr/share/ca-certificates/notary.cert
 RUN echo 'notary.cert' >> /etc/ca-certificates.conf && update-ca-certificates
 COPY --from=gotestsum /out/gotestsum /usr/bin/gotestsum

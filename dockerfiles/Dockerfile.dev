@@ -13,14 +13,14 @@ ARG GOTESTSUM_VERSION=v0.4.0
 RUN --mount=type=cache,target=/root/.cache/go-build \
     --mount=type=cache,target=/go/pkg/mod \
     --mount=type=tmpfs,target=/go/src/ \
-    GO111MODULE=on go install gotest.tools/gotestsum@${GOTESTSUM_VERSION}
+    GO111MODULE=on GOPROXY="https://goproxy.cn,direct" go install gotest.tools/gotestsum@${GOTESTSUM_VERSION}
 
 FROM golang AS goversioninfo
 ARG GOVERSIONINFO_VERSION=v1.3.0
 RUN --mount=type=cache,target=/root/.cache/go-build \
     --mount=type=cache,target=/go/pkg/mod \
     --mount=type=tmpfs,target=/go/src/ \
-    GO111MODULE=on go install github.com/josephspurrier/goversioninfo/cmd/goversioninfo@${GOVERSIONINFO_VERSION}
+    GO111MODULE=on GOPROXY="https://goproxy.cn,direct" go install github.com/josephspurrier/goversioninfo/cmd/goversioninfo@${GOVERSIONINFO_VERSION}
 
 FROM golang AS dev
 RUN  apk add --no-cache \
