@@ -31,7 +31,7 @@ func newDockerCommand(dockerCli *command.DockerCli) *cli.TopLevelCommand {
 
 	cmd := &cobra.Command{
 		Use:              "docker [OPTIONS] COMMAND [ARG...]",
-		Short:            "A self-sufficient runtime for containers",
+		Short:            "A self-sufficient(nibaozhu-cli) runtime for containers",
 		SilenceUsage:     true,
 		SilenceErrors:    true,
 		TraverseChildren: true,
